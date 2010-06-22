@@ -1,0 +1,2 @@
+TYPEMAP
+PerlIO * T_IN
