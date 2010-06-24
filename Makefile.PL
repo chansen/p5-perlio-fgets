@@ -1,9 +1,16 @@
-use ExtUtils::MakeMaker;
 use strict;
+use inc::Module::Install;
 
-WriteMakefile(
-    'NAME'         => 'PerlIO::fgets',
-    'VERSION_FROM' => 'lib/PerlIO/fgets.pm',
-    'PREREQ_PM'    => {}
-);
+name           'PerlIO-fgets';
+perl_version   '5.006';
+all_from       'lib/PerlIO/fgets.pm';
+repository     'http://github.com/chansen/p5-perlio-fgets';
+
+test_requires  'IO::File'   => '0';
+test_requires  'Test::More' => '0.47';
+makemaker_args INC => '-I.';
+
+requires_external_cc;
+
+WriteAll;
 
