@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 BEGIN {
-    our $VERSION = 0.1;
+    our $VERSION = '0.01';
     our @EXPORT  = qw[fgets];
 
     require XSLoader; XSLoader::load(__PACKAGE__, $VERSION);
@@ -80,8 +80,6 @@ C<fgets>
 =head1 LIMITATIONS
 
 Current implementation has no understanding of Unicode (UTF-X), only octets.
-
-=back
 
 =head1 PREREQUISITES
 
