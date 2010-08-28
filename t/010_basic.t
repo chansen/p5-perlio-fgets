@@ -5,7 +5,7 @@ use warnings;
 use IO::File      qw[SEEK_SET];
 use PerlIO::fgets qw[fgets];
 
-use Test::More tests => 12;
+use Test::More tests => 15;
 use Test::HexString;
 
 sub rewind(*) {
@@ -13,7 +13,7 @@ sub rewind(*) {
       || die(qq/Couldn't rewind file handle: '$!'/);
 }
 
-sub new_tmpfile_with($) {
+sub new_tmpfile_with {
     my $fh = IO::File->new_tmpfile
       || die(qq/Couldn't create a new temporary file: '$!'/);
 
@@ -52,5 +52,13 @@ sub new_tmpfile_with($) {
     my $fh = new_tmpfile_with("Hello\0World\n");
     is_hexstr fgets($fh, 1024), "Hello\0World\n";
     is_hexstr fgets($fh, 1024), "";
+}
+
+{
+    my $fh = new_tmpfile_with("");
+    is_hexstr fgets($fh, 1024), "";
+    is_hexstr fgets($fh, 1024), "";
+    close($fh);
+    is fgets($fh, 1024), undef;
 }
 
