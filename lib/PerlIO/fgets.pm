@@ -25,8 +25,16 @@ PerlIO::fgets - Provides a C<fgets()> like function for PerlIO file handles
     $octets = fgets(STDIN, 1024);
     $octets = fgets(*STDIN, 1024);
     $octets = fgets(\*STDIN, 1024);
+    
+    while ( ! eof($fh) ) {
+        defined( $_ = fgets($fh, 1024) ) or die "fgets failed: $!";
+        ...
+    }
+    
 
 =head1 DESCRIPTION
+
+Provides a C<fgets()> like function for PerlIO file handles
 
 =head1 FUNCTIONS
 
@@ -71,7 +79,7 @@ C<fgets>
 
 =head1 LIMITATIONS
 
-Current implementation has no understanding of Unicode (UTF-8), only octets.
+Current implementation has no understanding of Unicode (UTF-X), only octets.
 
 =back
 
