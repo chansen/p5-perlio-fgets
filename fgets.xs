@@ -7,16 +7,19 @@ MODULE = PerlIO::fgets    PACKAGE = PerlIO::fgets
 
 PROTOTYPES: ENABLE
 
-SV *
+void
 fgets(fp, count)
     PerlIO *fp
-    ssize_t count
-
-  CODE:
+    SSize_t count
+  PREINIT:
+    dXSTARG;
+  PPCODE:
     if (count < 0)
         XSRETURN_UNDEF;
 
-    RETVAL = newSVpvn("", 0);
+    SvUPGRADE(TARG, SVt_PV);
+    SvGROW(TARG, 128);
+    SvCUR_set(TARG, 0);
 
     if (PerlIO_fast_gets(fp)) {
 
@@ -34,7 +37,7 @@ fgets(fp, count)
                 if (found != NULL)
                     count = take = ++found - ptr;
 
-                sv_catpvn(RETVAL, ptr, take);
+                sv_catpvn_nomg(TARG, ptr, take);
                 count -= take;
                 avail -= take;
                 PerlIO_set_ptrcnt(fp, (void *)ptr + take, avail);
@@ -55,31 +58,31 @@ fgets(fp, count)
         }
     }
     else {
-        STDCHAR buf[8192];
-        SSize_t copy;
         int ch = EOF;
 
         while (count > 0) {
-            STDCHAR *bp = buf;
-            STDCHAR *bpe = buf + sizeof(buf);
+            SvGROW(TARG, SvCUR(TARG) + 1024);
+            STDCHAR *cur = SvPVX(TARG) + SvCUR(TARG);
+            STDCHAR *end = SvPVX(TARG) + SvLEN(TARG) - 1;
 
-            while (bp < bpe && count-- > 0 && (ch = PerlIO_getc(fp)) != EOF)
-                if ((*bp++ = ch) == '\n')
+            while (cur < end && count-- > 0 && (ch = PerlIO_getc(fp)) != EOF)
+                if ((*cur++ = ch) == '\n')
                     break;
 
-            if ((copy = bp - buf) > 0)
-                sv_catpvn(RETVAL, buf, copy);
+            SvCUR_set(TARG, cur - SvPVX(TARG));
+            *SvEND(TARG) = '\0';
 
             if (ch == EOF || ch == '\n')
                 break;
         }
     }
 
-    if (PerlIO_error(fp)) {
-        SvREFCNT_dec(RETVAL);
+    if (PerlIO_error(fp))
         XSRETURN_UNDEF;
-    }
 
-  OUTPUT:
-    RETVAL
+    SvPOK_only(TARG);
+    SvUTF8_off(TARG);
+    SvTAINT(TARG);
+    sv_dump(TARG);
+    PUSHTARG;
 
