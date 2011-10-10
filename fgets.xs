@@ -43,18 +43,9 @@ fgets(fp, count)
                 PerlIO_set_ptrcnt(fp, (void *)ptr + take, avail);
             }
 
-            if (count > 0 && avail <= 0) {
-#if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
+            if (count > 0 && avail <= 0)
                 if (PerlIO_fill(fp) != 0)
                     break;
-#else
-                const int ch = PerlIO_getc(fp);
-                if (ch == EOF)
-                    break;
-
-                PerlIO_ungetc(fp, ch);
-#endif
-            }
         }
     }
     else {
@@ -82,6 +73,5 @@ fgets(fp, count)
     *SvEND(TARG) = '\0';
     SvPOK_only(TARG);
     SvUTF8_off(TARG);
-    SvTAINT(TARG);
     PUSHTARG;
 
