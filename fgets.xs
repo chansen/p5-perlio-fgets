@@ -18,7 +18,7 @@ fgets(fp, count)
         XSRETURN_UNDEF;
 
     SvUPGRADE(TARG, SVt_PV);
-    SvGROW(TARG, 128);
+    SvGROW(TARG, 256);
     SvCUR_set(TARG, 0);
 
     if (PerlIO_fast_gets(fp)) {
@@ -61,7 +61,7 @@ fgets(fp, count)
         int ch = EOF;
 
         while (count > 0) {
-            SvGROW(TARG, SvCUR(TARG) + 1024);
+            SvGROW(TARG, SvCUR(TARG) + 256);
             STDCHAR *cur = SvPVX(TARG) + SvCUR(TARG);
             STDCHAR *end = SvPVX(TARG) + SvLEN(TARG) - 1;
 
@@ -70,7 +70,6 @@ fgets(fp, count)
                     break;
 
             SvCUR_set(TARG, cur - SvPVX(TARG));
-            *SvEND(TARG) = '\0';
 
             if (ch == EOF || ch == '\n')
                 break;
@@ -80,9 +79,9 @@ fgets(fp, count)
     if (PerlIO_error(fp))
         XSRETURN_UNDEF;
 
+    *SvEND(TARG) = '\0';
     SvPOK_only(TARG);
     SvUTF8_off(TARG);
     SvTAINT(TARG);
-    sv_dump(TARG);
     PUSHTARG;
 
