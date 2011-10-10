@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 BEGIN {
-    our $VERSION = '0.01';
+    our $VERSION = '0.02';
     our @EXPORT  = qw[fgets];
 
     require XSLoader; XSLoader::load(__PACKAGE__, $VERSION);
