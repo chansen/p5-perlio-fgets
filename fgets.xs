@@ -11,6 +11,8 @@ void
 fgets(fp, count)
     PerlIO *fp
     SSize_t count
+  PROTOTYPE:
+    *$
   PREINIT:
     dXSTARG;
   PPCODE:
@@ -72,6 +74,5 @@ fgets(fp, count)
 
     *SvEND(TARG) = '\0';
     SvPOK_only(TARG);
-    SvUTF8_off(TARG);
     PUSHTARG;
 
